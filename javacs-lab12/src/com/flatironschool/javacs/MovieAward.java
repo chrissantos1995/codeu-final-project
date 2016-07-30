@@ -11,6 +11,11 @@ import java.util.Map.Entry;
 import java.util.Queue;
 
 import redis.clients.jedis.Jedis;
+import java.net.URL;
+
+import org.jsoup.Connection;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
@@ -60,6 +65,15 @@ public class MovieAward {
     Map<String, Integer> map = index.getCounts(term);
     return new WikiSearch(map);
   }
+
+
+  // Director logic
+  /*public String getDirectorWikiUrl(String source) {
+
+  }
+  public int getDirectorAwardCount(String source) {
+    // Call get getDirectorWikiUrl(source)
+  }*/
 
   public static void main(String[] args) throws IOException {
     Jedis jedis = JedisMaker.make();

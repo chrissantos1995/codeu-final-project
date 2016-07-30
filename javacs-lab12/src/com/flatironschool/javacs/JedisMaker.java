@@ -73,7 +73,7 @@ public class JedisMaker {
 		try {
 			jedis.auth(auth);
 		} catch (Exception e) {
-			System.out.println("Trying to connect to " + host);
+			System.out.{print}ln("Trying to connect to " + host);
 			System.out.println("on port " + port);
 			System.out.println("with authcode " + auth);
 			System.out.println("Got exception " + e);
