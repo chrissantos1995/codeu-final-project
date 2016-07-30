@@ -27,6 +27,7 @@ public class MovieAward {
   private Queue<String> queue = new LinkedList<String>();
   final static WikiFetcher wf = new WikiFetcher();
   private Map<String, Integer> map;
+  public static String  wikiBaseUrl = "https://en.wikipedia.org";
 
   // This wipes all the data off the Redis database
   public void deleteJedisIndexData(JedisIndex index) {
@@ -68,19 +69,31 @@ public class MovieAward {
 
 
   // Director logic
-  /*public String getDirectorWikiUrl(String source) {
-
+  public static String getDirectorWikiUrl(String source) throws IOException {
+    // Grabs the Movie URL for use in JSoup
+    Document doc = Jsoup.connect(source).get();
+    // Table found on right hand side of movie wiki page
+    Elements movieInfoTable = doc.select(".infobox.vevent");
+    // All the rows inside of the table
+    Elements rows = movieInfoTable.select("tr");
+    // finds director url and appends to base url
+    String directorWikiUrl = wikiBaseUrl + rows.get(2).select("td").select("a").first().attr("href");
+    System.out.println(directorWikiUrl);
+    return directorWikiUrl;
   }
-  public int getDirectorAwardCount(String source) {
+  
+  public static int getDirectorAwardCount(String source) {
     // Call get getDirectorWikiUrl(source)
-  }*/
+    return 3;
+  }
 
   public static void main(String[] args) throws IOException {
-    Jedis jedis = JedisMaker.make();
-    JedisIndex index = new JedisIndex(jedis); 
-    String term1 = "academy";
-    System.out.println("Query: " + term1);
-    WikiSearch search1 = search(term1, index);
-    search1.print();
+    // Jedis jedis = JedisMaker.make();
+    // JedisIndex index = new JedisIndex(jedis); 
+    // String term1 = "academy";
+    // System.out.println("Query: " + term1);
+    // WikiSearch search1 = search(term1, index);
+    // search1.print();
+    getDirectorWikiUrl("https://en.wikipedia.org/wiki/The_Social_Network");
   }
 }
