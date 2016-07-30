@@ -81,10 +81,32 @@ public class MovieAward {
     System.out.println(directorWikiUrl);
     return directorWikiUrl;
   }
-  
-  public static int getDirectorAwardCount(String source) {
-    // Call get getDirectorWikiUrl(source)
-    return 3;
+
+  public static int getDirectorAwardCount(String source) throws IOException {
+    Document doc = Jsoup.connect(getDirectorWikiUrl(source)).get();
+    // Given that there is no common format for Director accolades.
+    // This code counts particular words that would be expected in director page
+    // Hypothesis: Higher  frequency of these words -> higher chance of winning oscar
+    Elements won = doc.getElementsContainingOwnText(" won ");
+    Elements popular = doc.getElementsContainingOwnText(" popular ");
+    Elements influential = doc.getElementsContainingOwnText(" influential ");
+    Elements award = doc.getElementsContainingOwnText(" award ");
+    Elements acclaimed = doc.getElementsContainingOwnText(" acclaimed ");
+    int sumOfTerms = won.size() + popular.size() + influential.size() + award.size() + acclaimed.size();
+    System.out.println(sumOfTerms);
+    return sumOfTerms;
+  }
+
+  public static String countActorAwards(String source) throws IOException {
+    Document doc = Jsoup.connect(getDirectorWikiUrl(source)).get();
+
+    return "jh";
+
+  }
+
+  public static boolean releasedDuringOscarSeason(String source) throws IOException {
+    // Checks to see if a movie was released during September - December. If so, return true.
+    return false;
   }
 
   public static void main(String[] args) throws IOException {
@@ -94,6 +116,14 @@ public class MovieAward {
     // System.out.println("Query: " + term1);
     // WikiSearch search1 = search(term1, index);
     // search1.print();
-    getDirectorWikiUrl("https://en.wikipedia.org/wiki/The_Social_Network");
+    String interstellar = "https://en.wikipedia.org/wiki/Interstellar_(film)";
+    String drive = "https://en.wikipedia.org/wiki/Drive_(2011_film)";
+    String birdman = "https://en.wikipedia.org/wiki/Birdman_(film)";
+    String carter = "https://en.wikipedia.org/wiki/John_Carter_(film)";
+    getDirectorAwardCount(carter);
+    getDirectorAwardCount(interstellar);
+    getDirectorAwardCount(drive);
+    getDirectorAwardCount(birdman);
+    //countActorAwards(source);
   }
 }
