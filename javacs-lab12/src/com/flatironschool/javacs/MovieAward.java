@@ -85,14 +85,18 @@ public class MovieAward {
   public static int getDirectorAwardCount(String source) throws IOException {
     Document doc = Jsoup.connect(getDirectorWikiUrl(source)).get();
     // Given that there is no common format for Director accolades.
-    // This code counts particular words that would be expected in director page
+    // This code counts particular words that would be expected in 'successful' director page
     // Hypothesis: Higher  frequency of these words -> higher chance of winning oscar
     Elements won = doc.getElementsContainingOwnText(" won ");
     Elements popular = doc.getElementsContainingOwnText(" popular ");
     Elements influential = doc.getElementsContainingOwnText(" influential ");
     Elements award = doc.getElementsContainingOwnText(" award ");
     Elements acclaimed = doc.getElementsContainingOwnText(" acclaimed ");
-    int sumOfTerms = won.size() + popular.size() + influential.size() + award.size() + acclaimed.size();
+    Elements historic = doc.getElementsContainingOwnText(" historic ");
+    Elements festival = doc.getElementsContainingOwnText(" festival ");
+    Elements nominated = doc.getElementsContainingOwnText(" nominated ");
+    int sumOfTerms = won.size() + popular.size() + influential.size() + award.size() 
+      + acclaimed.size() + festival.size() + historic.size() + nominated.size();
     System.out.println(sumOfTerms);
     return sumOfTerms;
   }
@@ -120,10 +124,14 @@ public class MovieAward {
     String drive = "https://en.wikipedia.org/wiki/Drive_(2011_film)";
     String birdman = "https://en.wikipedia.org/wiki/Birdman_(film)";
     String carter = "https://en.wikipedia.org/wiki/John_Carter_(film)";
+    String titanic = "https://en.wikipedia.org/wiki/Titanic_(1997_film)";
+    String gravity = "https://en.wikipedia.org/wiki/Gravity_(film)";
+    getDirectorAwardCount(gravity);
     getDirectorAwardCount(carter);
     getDirectorAwardCount(interstellar);
     getDirectorAwardCount(drive);
     getDirectorAwardCount(birdman);
+    getDirectorAwardCount(titanic);
     //countActorAwards(source);
   }
 }
