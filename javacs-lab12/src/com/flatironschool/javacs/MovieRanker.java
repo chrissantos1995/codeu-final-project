@@ -20,7 +20,7 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 
-public class MovieAward {
+public class MovieRanker {
 
   public static String source;
   public JedisIndex index;
