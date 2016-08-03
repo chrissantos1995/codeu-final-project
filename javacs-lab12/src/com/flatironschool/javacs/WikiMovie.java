@@ -9,7 +9,15 @@ import java.util.ArrayList;
 import java.io.IOException;
 
 import redis.clients.jedis.Jedis;
+
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+
 import java.net.URL;
+
+import redis.clients.jedis.Jedis;
 
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
@@ -29,6 +37,10 @@ public class WikiMovie {
 	public String rottenTomatoesScore;
 	public String metaCriticScore;
 
+	public static String  wikiBaseUrl = "https://en.wikipedia.org";
+
+	public int directorAwardCount = 0;
+
 	// Constructors
 
 	public WikiMovie(String url) throws IOException {
@@ -36,115 +48,137 @@ public class WikiMovie {
 		init();
 	}
 
-	// Methods
-
 	public void init() throws IOException {
 
-		// download and parse the document
+		//download and parse the document
 		Document doc = Jsoup.connect(url).get();
 
-		// select the main content text 
+		//select the main content text
 		Element content = doc.getElementById("mw-content-text");
 
-		directorUrl = getDirectorUrl(content);
 		//castUrls = getCastUrls(content);
 
 		rottenTomatoesScore = getMovieRating(content, "rotten tomatoes", "(\\d+%)");
 
-		metaCriticScore = getMovieRating(content, "metacritic", "(\\d+ out of \\d+)");
+		metaCriticScore = getMovieRating(content, "metacritic", "(score of \\d+)");
+
+
+		directorUrl = getDirectorWikiUrl(url);
+		directorAwardCount = getDirectorAwardCount(url);
+
+		/*castUrls = getCastUrls(content); */
 	}
 
-  	// return the URL of the WikiMovie's director
-	public String getDirectorUrl(Element content) {
+	// return a List of URLs of the WikiMovie's cast
+	public List<String> getCastUrls(Element content) {
 
-	    // Table found on right hand side of movie wiki page
-	    Element movieInfoTable = content.select(".infobox.vevent").first();
+		// The list to return
+		List<String> castList = new ArrayList<>();
 
-	    // All the rows inside of the table
-	    Elements rows = movieInfoTable.select("tr");
+		return castList;
+	}
 
-	    // finds director url
-	    String directorWikiUrl = rows.get(2).select("td").select("a").first().attr("href");
+	// returns the movie rating of a wikipedia page, given target string and regex of numerical representation
+	private String getMovieRating(Element content, String targetString, String ratingRegex) {
 
-	    return directorWikiUrl;
-  	}
+		String score = null; // the Rotten Tomatoes score
 
-  	// return a List of URLs of the WikiMovie's cast
-  	public List<String> getCastUrls(Element content) {
+		Elements paragraphs = content.select("p");
 
-  		// The list to return
-  		List<String> castList = new ArrayList<>();
+		for (Element p : paragraphs) { // iterate the paragraphs
 
-  		return castList;
-  	}
+			String textContent = p.html().toLowerCase();
 
-  	// returns the movie rating of a wikipedia page, given target string and regex of numerical representation 
-  	private String getMovieRating(Element content, String targetString, String ratingRegex) {
+			if (textContent.contains(targetString)) {
 
-  		String score = null; // the Rotten Tomatoes score
+				int targetSentenceIndex = textContent.indexOf(targetString);
 
-  		Elements paragraphs = content.select("p");
+				String targetSentence = getContainingSentence(textContent, targetSentenceIndex);
 
-  		for(Element p : paragraphs) { // iterate the paragraphs
+				score = firstRegexMatch(ratingRegex, targetSentence);
 
-  			String textContent = p.html().toLowerCase();
+				break;
+			}
+		}
 
-  			if(textContent.contains(targetString)) {
+		return score;
+	}
 
-  				int targetSentenceIndex = textContent.indexOf(targetString);
+	// returns the percent number closest to the index given in a block of text restricted to the sentence containing the index
+	private String getContainingSentence(String textContent, int targetSentenceIndex) {
 
-  				String targetSentence = getContainingSentence(textContent,targetSentenceIndex);
+		int startIndex;
+		int endIndex;
+		char c;
 
-  				score = firstRegexMatch(ratingRegex, targetSentence);
+		startIndex = targetSentenceIndex;
+		c = textContent.charAt(startIndex);
 
-  				break;
-  			}
-  		}
+		while (startIndex >= 1 && c != '.') {
+			--startIndex;
+			c = textContent.charAt(startIndex);
+		}
 
-  		return score;
-  	}
+		endIndex = textContent.indexOf(".", startIndex + 1);
 
-  	// returns the percent number closest to the index given in a block of text restricted to the sentence containing the index
-  	private String getContainingSentence(String textContent, int targetSentenceIndex) {
+		endIndex = endIndex > 0 ? endIndex : textContent.length();
 
-  		int startIndex;
-  		int endIndex;
-  		char c;
+		return textContent.substring(startIndex, endIndex);
+	}
 
-  		startIndex = targetSentenceIndex;
-  		c = textContent.charAt(startIndex);
+	public static String getDirectorWikiUrl(String source) throws IOException {
+		// Grabs the Movie URL for use in JSoup
+		Document doc = Jsoup.connect(source).get();
+		// Table found on right hand side of movie wiki page
+		Elements movieInfoTable = doc.select(".infobox.vevent");
+		// All the rows inside of the table
+		Elements rows = movieInfoTable.select("tr");
+		// finds director url and appends to base url
+		String directorWikiUrl = wikiBaseUrl + rows.get(2).select("td").select("a").first().attr("href");
+		return directorWikiUrl;
+	}
 
-  		while(startIndex >= 1 && c != '.') {
-  			--startIndex;
-  			c = textContent.charAt(startIndex);
-  		}
+	public static int getDirectorAwardCount(String source) throws IOException {
+		Document doc = Jsoup.connect(getDirectorWikiUrl(source)).get();
+		// Given that there is no common format for Director accolades.
+		// This code counts particular words that would be expected in 'successful' director page
+		// Hypothesis: Higher  frequency of these words -> higher chance of winning oscar
+		Elements won = doc.getElementsContainingOwnText(" won ");
+		Elements popular = doc.getElementsContainingOwnText(" popular ");
+		Elements influential = doc.getElementsContainingOwnText(" influential ");
+		Elements award = doc.getElementsContainingOwnText(" award ");
+		Elements acclaimed = doc.getElementsContainingOwnText(" acclaimed ");
+		Elements historic = doc.getElementsContainingOwnText(" historic ");
+		Elements festival = doc.getElementsContainingOwnText(" festival ");
+		Elements nominated = doc.getElementsContainingOwnText(" nominated ");
+		int sumOfTerms = won.size() + popular.size() + influential.size() + award.size()
+		                 + acclaimed.size() + festival.size() + historic.size() + nominated.size();
+		return sumOfTerms;
+	}
 
-  		endIndex = textContent.indexOf(".",startIndex + 1);
+	// Returns the first match of a regex string
+	private String firstRegexMatch(String regex, String text) {
 
-  		endIndex = endIndex > 0 ? endIndex : textContent.length();
+		Pattern pat = Pattern.compile(regex);
+		Matcher mat = pat.matcher(text);
 
-  		return textContent.substring(startIndex,endIndex);
-  	}
+		if (mat.find())
+			return mat.group(1);
 
-  	// Returns the first match of a regex string
-  	private String firstRegexMatch(String regex, String text) {
+		return null;
+	}
 
-  		Pattern pat = Pattern.compile(regex);
-  		Matcher mat = pat.matcher(text);
+	public static void main(String[] args) throws IOException {
 
-  		if(mat.find())
-  			return mat.group(1);
+		WikiMovie wm = new WikiMovie("https://en.wikipedia.org/wiki/Br%C3%BCno");
 
-  		return null;
-  	}
+		System.out.println("Rotten tomatoes score: " + wm.rottenTomatoesScore);
 
-  	public static void main(String[] args) throws IOException {
+		System.out.println("Metacritic score: " + wm.metaCriticScore);
+	}
 
-  		WikiMovie wm = new WikiMovie("https://en.wikipedia.org/wiki/Tropic_Thunder");
-
-  		System.out.println("Rotten tomatoes score: " + wm.rottenTomatoesScore);
-
-  		System.out.println("Metacritic score: " + wm.metaCriticScore);
-  	}
-
+	public static boolean releasedDuringOscarSeason(String source) throws IOException {
+		// Checks to see if a movie was released during September - December. If so, return true.
+		return false;
+	}
 }
