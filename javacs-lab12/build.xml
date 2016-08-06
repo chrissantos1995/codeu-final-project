@@ -354,6 +354,13 @@
     </java>
     </target>
 
+    <target name="WikiMovie">
+    <java classname="com.flatironschool.javacs.WikiMovie" failonerror="true" fork="yes">
+        <env key="REDISTOGO_AUTH" value="2979811b19fe8895c14425ed5e694107"/>
+        <classpath refid="JavaCS.classpath"/>
+    </java>
+    </target>
+
     <target name="LinkedListExample">
         <java classname="com.flatironschool.javacs.LinkedListExample" failonerror="true" fork="yes">
             <classpath refid="JavaCS.classpath"/>
