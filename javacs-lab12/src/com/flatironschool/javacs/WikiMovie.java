@@ -27,7 +27,8 @@ public class WikiMovie {
   public String rottenTomatoesScore;
   public String metaCriticScore;
   public static String  wikiBaseUrl = "https://en.wikipedia.org";
-  public int [directorAwardCount] = 0;
+  public int directorAwardCount = 0;
+  public int producerAwardCount = 0;
 
   // Constructors
 
@@ -47,6 +48,7 @@ public class WikiMovie {
     // Element content = doc.getElementById("mw-content-text");
     directorUrl = getDirectorWikiUrl(url);
     directorAwardCount = getDirectorAwardCount(url);
+    producerAwardCount = getProducerAwardCount(url);
 
     /*castUrls = getCastUrls(content);
     rottenTomatoesScore = getRottenTomatoesScore(content);
@@ -121,9 +123,15 @@ public class WikiMovie {
     return sumOfTerms;
   }
 
-    public static boolean releasedDuringOscarSeason(String source) throws IOException {
+    public static int getProducerAwardCount(String source) throws IOException {
     // Checks to see if a movie was released during September - December. If so, return true.
-    return false;
+    Document doc = Jsoup.connect(source).get();
+    Elements movieInfoTable = doc.select(".infobox.vevent");
+    // All the rows inside of the table
+    Elements rows = movieInfoTable.select("tr");
+    Elements producerUrlList = rows.get(3).select("td").select("ul");
+    //System.out.println(producerUrlList);
+    return 0;
   }
 
 

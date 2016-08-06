@@ -23,20 +23,16 @@ import org.jsoup.select.Elements;
 public class MovieRanker {
 
   public static void main(String[] args) throws IOException {
-    // Jedis jedis = JedisMaker.make();
-    // JedisIndex index = new JedisIndex(jedis); 
-    // String term1 = "academy";
-    // System.out.println("Query: " + term1);
-    // WikiSearch search1 = search(term1, index);
-    // search1.print();
+
     String interstellar = "https://en.wikipedia.org/wiki/Interstellar_(film)";
     String drive = "https://en.wikipedia.org/wiki/Drive_(2011_film)";
     String birdman = "https://en.wikipedia.org/wiki/Birdman_(film)";
     String carter = "https://en.wikipedia.org/wiki/John_Carter_(film)";
     String titanic = "https://en.wikipedia.org/wiki/Titanic_(1997_film)";
     String gravity = "https://en.wikipedia.org/wiki/Gravity_(film)";
-    WikiMovie movie = new WikiMovie(drive);
-    System.out.println(movie.directorAwardCount);
-    //countActorAwards(source);
+
+    WikiMovie driveMovie = new WikiMovie(drive);
+    System.out.println(drive);
+    System.out.println(driveMovie.directorAwardCount);
   }
 }
