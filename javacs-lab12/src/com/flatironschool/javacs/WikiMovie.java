@@ -102,7 +102,7 @@ public class WikiMovie {
 	}
 
 	private Integer getInteger(String str) {
-		String intStr = firstRegexMatch("(\\d+)",str);
+		String intStr = firstRegexMatch("(\\d+)", str);
 		return Integer.parseInt(intStr);
 	}
 
@@ -170,17 +170,28 @@ public class WikiMovie {
 		return null;
 	}
 
-	public static void main(String[] args) throws IOException {
-
-		WikiMovie wm = new WikiMovie("https://en.wikipedia.org/wiki/Tropic_Thunder");
-
-		System.out.println("Rotten tomatoes score: " + wm.rottenTomatoesScore);
-
-		System.out.println("Metacritic score: " + wm.metaCriticScore);
+	public static int getProducerAwardCount(String source) throws IOException {
+		// Checks to see if a movie was released during September - December. If so, return true.
+		Document doc = Jsoup.connect(source).get();
+		Elements movieInfoTable = doc.select(".infobox.vevent");
+		// All the rows inside of the table
+		Elements rows = movieInfoTable.select("tr");
+		Elements producerUrlList = rows.get(3).select("td").select("ul");
+		//System.out.println(producerUrlList);
+		return 0;
 	}
 
 	public static boolean releasedDuringOscarSeason(String source) throws IOException {
 		// Checks to see if a movie was released during September - December. If so, return true.
 		return false;
+	}
+
+	public static void main(String[] args) throws IOException {
+
+		WikiMovie wm = new WikiMovie("https://en.wikipedia.org/wiki/Br%C3%BCno");
+
+		System.out.println("Rotten tomatoes score: " + wm.rottenTomatoesScore);
+
+		System.out.println("Metacritic score: " + wm.metaCriticScore);
 	}
 }
