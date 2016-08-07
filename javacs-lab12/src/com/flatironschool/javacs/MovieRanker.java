@@ -6,6 +6,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Queue;
@@ -34,5 +35,21 @@ public class MovieRanker {
 
     WikiMovie movie = new WikiMovie(bruno);
     movie.releasedDuringOscarSeason(bruno);
+
+    List<WikiMovie> wikiMovieList = new ArrayList<>();
+
+    wikiMovieList.add(new WikiMovie(interstellar));
+    wikiMovieList.add(new WikiMovie(drive));
+    wikiMovieList.add(new WikiMovie(birdman));
+    wikiMovieList.add(new WikiMovie(carter));
+    wikiMovieList.add(new WikiMovie(titanic));
+    wikiMovieList.add(new WikiMovie(gravity));
+    wikiMovieList.add(new WikiMovie(bruno));
+
+    Collections.sort(wikiMovieList, Collections.reverseOrder());
+
+    for(WikiMovie wm : wikiMovieList) {
+        System.out.println(wm.url);
+    }
   }
 }

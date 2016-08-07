@@ -25,7 +25,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-public class WikiMovie implements Comparable<WikiMovie>{
+public class WikiMovie implements Comparable<WikiMovie> {
 
 	// Global Variables
 
@@ -95,7 +95,7 @@ public class WikiMovie implements Comparable<WikiMovie>{
 
 				String score = firstRegexMatch(ratingRegex, targetSentence);
 
-				if(score == null)
+				if (score == null)
 					break;
 
 				return getInteger(score);
@@ -177,17 +177,17 @@ public class WikiMovie implements Comparable<WikiMovie>{
 
 	public static boolean releasedDuringOscarSeason(String source) throws IOException {
 		// Checks to see if a movie was released during September - December. If so, return true.
-    Document doc = Jsoup.connect(source).get();
-    // Table found on right hand side of movie wiki page
-    Elements movieInfoTable = doc.select(".infobox.vevent");
-    // All the rows inside of the table
-    Elements rows = movieInfoTable.select("tr");
-    // finds director url and appends to base url
-    int releaseDateIndex = rows.size() - 6;
-    Element r = rows.get(releaseDateIndex).select("td").first().select("li").first();
-    String rstring = r.text();
-    System.out.println(rstring);
-    
+		Document doc = Jsoup.connect(source).get();
+		// Table found on right hand side of movie wiki page
+		Elements movieInfoTable = doc.select(".infobox.vevent");
+		// All the rows inside of the table
+		Elements rows = movieInfoTable.select("tr");
+		// finds director url and appends to base url
+		int releaseDateIndex = rows.size() - 6;
+		Element r = rows.get(releaseDateIndex).select("td").first().select("li").first();
+		String rstring = r.text();
+		System.out.println(rstring);
+
 		return false;
 	}
 
@@ -196,7 +196,7 @@ public class WikiMovie implements Comparable<WikiMovie>{
 		int thisWikiMovieTotal = this.rottenTomatoesScore + this.metaCriticScore + this.directorAwardCount;
 		int thatWikiMovieTotal = that.rottenTomatoesScore + that.metaCriticScore + that.directorAwardCount;
 
-		return thisWikiMovieTotal - thatWikiMovieTotal; 
+		return thisWikiMovieTotal - thatWikiMovieTotal;
 	}
 
 	public static void main(String[] args) throws IOException {
