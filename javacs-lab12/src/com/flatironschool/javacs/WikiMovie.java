@@ -34,8 +34,8 @@ public class WikiMovie {
 	public String directorUrl;
 	public List<String> castUrls;
 
-	public String rottenTomatoesScore;
-	public String metaCriticScore;
+	public Integer rottenTomatoesScore;
+	public Integer metaCriticScore;
 
 	public static String  wikiBaseUrl = "https://en.wikipedia.org";
 
@@ -62,7 +62,6 @@ public class WikiMovie {
 
 		metaCriticScore = getMovieRating(content, "metacritic", "(score of \\d+)");
 
-
 		directorUrl = getDirectorWikiUrl(url);
 
 		directorAwardCount = getDirectorAwardCount(url);
@@ -80,9 +79,7 @@ public class WikiMovie {
 	}
 
 	// returns the movie rating of a wikipedia page, given target string and regex of numerical representation
-	private String getMovieRating(Element content, String targetString, String ratingRegex) {
-
-		String score = null; // the Rotten Tomatoes score
+	private Integer getMovieRating(Element content, String targetString, String ratingRegex) {
 
 		Elements paragraphs = content.select("p");
 
@@ -96,13 +93,18 @@ public class WikiMovie {
 
 				String targetSentence = getContainingSentence(textContent, targetSentenceIndex);
 
-				score = firstRegexMatch(ratingRegex, targetSentence);
+				String score = firstRegexMatch(ratingRegex, targetSentence);
 
-				break;
+				return getInteger(score);
 			}
 		}
 
-		return score;
+		return null;
+	}
+
+	private Integer getInteger(String str) {
+		String intStr = firstRegexMatch("(\\d+)", str);
+		return Integer.parseInt(intStr);
 	}
 
 	// returns the percent number closest to the index given in a block of text restricted to the sentence containing the index
@@ -170,18 +172,17 @@ public class WikiMovie {
 	}
 
 
-
 	public static boolean releasedDuringOscarSeason(String source) throws IOException {
 		// Checks to see if a movie was released during September - December. If so, return true.
 		return false;
 	}
-  
-  public static void main(String[] args) throws IOException {
 
-    WikiMovie wm = new WikiMovie("https://en.wikipedia.org/wiki/Br%C3%BCno");
+	public static void main(String[] args) throws IOException {
 
-    System.out.println("Rotten tomatoes score: " + wm.rottenTomatoesScore);
+		WikiMovie wm = new WikiMovie("https://en.wikipedia.org/wiki/Br%C3%BCno");
 
-    System.out.println("Metacritic score: " + wm.metaCriticScore);
-  }
+		System.out.println("Rotten tomatoes score: " + wm.rottenTomatoesScore);
+
+		System.out.println("Metacritic score: " + wm.metaCriticScore);
+	}
 }
