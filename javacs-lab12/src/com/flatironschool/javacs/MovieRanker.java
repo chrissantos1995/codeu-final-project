@@ -30,7 +30,9 @@ public class MovieRanker {
     String carter = "https://en.wikipedia.org/wiki/John_Carter_(film)";
     String titanic = "https://en.wikipedia.org/wiki/Titanic_(1997_film)";
     String gravity = "https://en.wikipedia.org/wiki/Gravity_(film)";
+    String bruno = "https://en.wikipedia.org/wiki/Br%C3%BCno";
 
-    WikiMovie movie = new WikiMovie(titanic);
+    WikiMovie movie = new WikiMovie(bruno);
+    movie.releasedDuringOscarSeason(bruno);
   }
 }

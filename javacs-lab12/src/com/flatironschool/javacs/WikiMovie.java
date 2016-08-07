@@ -174,6 +174,17 @@ public class WikiMovie {
 
 	public static boolean releasedDuringOscarSeason(String source) throws IOException {
 		// Checks to see if a movie was released during September - December. If so, return true.
+    Document doc = Jsoup.connect(source).get();
+    // Table found on right hand side of movie wiki page
+    Elements movieInfoTable = doc.select(".infobox.vevent");
+    // All the rows inside of the table
+    Elements rows = movieInfoTable.select("tr");
+    // finds director url and appends to base url
+    int releaseDateIndex = rows.size() - 6;
+    Element r = rows.get(releaseDateIndex).select("td").first().select("li").first();
+    String rstring = r.text();
+    System.out.println(rstring);
+    
 		return false;
 	}
 
