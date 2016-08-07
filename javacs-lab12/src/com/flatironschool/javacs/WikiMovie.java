@@ -25,7 +25,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-public class WikiMovie {
+public class WikiMovie implements Comparable<WikiMovie>{
 
 	// Global Variables
 
@@ -94,11 +94,14 @@ public class WikiMovie {
 
 				String score = firstRegexMatch(ratingRegex, targetSentence);
 
+				if(score == null)
+					break;
+
 				return getInteger(score);
 			}
 		}
 
-		return null;
+		return 55; // Default value
 	}
 
 	private Integer getInteger(String str) {
@@ -186,12 +189,25 @@ public class WikiMovie {
 		return false;
 	}
 
+	public int compareTo(WikiMovie that) {
+
+		int thisWikiMovieTotal = this.rottenTomatoesScore + this.metaCriticScore + this.directorAwardCount;
+		int thatWikiMovieTotal = that.rottenTomatoesScore + that.metaCriticScore + that.directorAwardCount;
+
+		return thisWikiMovieTotal - thatWikiMovieTotal; 
+	}
+
 	public static void main(String[] args) throws IOException {
 
 		WikiMovie wm = new WikiMovie("https://en.wikipedia.org/wiki/Br%C3%BCno");
+		WikiMovie wm2 = new WikiMovie("https://en.wikipedia.org/wiki/Birdman_(film)");
 
-		System.out.println("Rotten tomatoes score: " + wm.rottenTomatoesScore);
+		System.out.println("Bruno Rotten tomatoes score: " + wm.rottenTomatoesScore);
+		System.out.println("Bruno Metacritic score: " + wm.metaCriticScore);
 
-		System.out.println("Metacritic score: " + wm.metaCriticScore);
+		System.out.println("Birdman Rotten tomatoes score: " + wm2.rottenTomatoesScore);
+		System.out.println("Birdman Metacritic score: " + wm2.metaCriticScore);
+
+		System.out.println("Bruno vs Birdman: " + wm.compareTo(wm2));
 	}
 }
