@@ -31,8 +31,6 @@ public class MovieRanker {
     String titanic = "https://en.wikipedia.org/wiki/Titanic_(1997_film)";
     String gravity = "https://en.wikipedia.org/wiki/Gravity_(film)";
 
-    WikiMovie driveMovie = new WikiMovie(drive);
-    System.out.println(drive);
-    System.out.println(driveMovie.directorAwardCount);
+    WikiMovie movie = new WikiMovie(titanic);
   }
 }

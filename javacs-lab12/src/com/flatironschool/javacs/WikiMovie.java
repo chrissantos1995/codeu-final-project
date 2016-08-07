@@ -64,6 +64,7 @@ public class WikiMovie {
 
 
 		directorUrl = getDirectorWikiUrl(url);
+
 		directorAwardCount = getDirectorAwardCount(url);
 
 		/*castUrls = getCastUrls(content); */
@@ -168,16 +169,7 @@ public class WikiMovie {
 		return null;
 	}
 
-  public static int getProducerAwardCount(String source) throws IOException {
-    // Checks to see if a movie was released during September - December. If so, return true.
-    Document doc = Jsoup.connect(source).get();
-    Elements movieInfoTable = doc.select(".infobox.vevent");
-    // All the rows inside of the table
-    Elements rows = movieInfoTable.select("tr");
-    Elements producerUrlList = rows.get(3).select("td").select("ul");
-    //System.out.println(producerUrlList);
-    return 0;
-  }
+
 
 	public static boolean releasedDuringOscarSeason(String source) throws IOException {
 		// Checks to see if a movie was released during September - December. If so, return true.
